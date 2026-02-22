@@ -5,50 +5,47 @@ import Todo from './components/Todo'
 
 function App() {
 
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState(()=>{
+    const stored = localStorage.getItem("Todos");
+    return stored?JSON.parse(stored):[]
+  });
   const [editId, setEditId] = useState(null);
+  const [inputValue,setInputValue] = useState("");
 
   const inputRef = useRef();
   const pendingTodos = useRef();
   const completedTodos = useRef();
   const checkFinished = useRef();
-  useEffect(() => {
-    if (localStorage.getItem("Todos")) {
-      const StringData = localStorage.getItem("Todos");
-      const data = JSON.parse(StringData);
-      setTodos(data)
-    }
-  }, [])
 
 
-  function handleEdit(id) {
-    const editTodo = todos.filter((item) => item.id == id)
-    console.log(editTodo[0])
-    console.log(editTodo[0].id)
-    console.log(typeof(editTodo[0].id))
-    setEditId(editTodo[0].id)
-    // setTodos(todos.filter(item => item.id != id))
-    inputRef.current.value = editTodo[0].todo;
-    inputRef.current.focus()
-    handleDelete(id)
-  }
+function handleChange(e){
+  setInputValue(e.target.value);
+}
+
+
 
   useEffect(()=>{
-      console.log(editId)
-    },[editId])
+    localStorage.setItem("Todos",JSON.stringify(todos))
+  },[todos])
 
-    
-
-    
-  function handleDelete(id) {
-    const oldData = localStorage.getItem("Todos");
-    const oldJsonData = JSON.parse(oldData);
-    const newJsonData = oldJsonData.filter((item) => item.id != id)
-    localStorage.setItem("Todos", JSON.stringify(newJsonData))
-    setTodos(todos.filter((item) => item.id != id))
-    console.log(newJsonData)
+  function handleEdit(id) {
+    const editTodo = todos.find((item) => item.id == id)
+    setEditId(editTodo.id)
+    console.log(editTodo)
+    console.log(editTodo.id)
+    console.log(typeof (editTodo.id))
+    // inputRef.current.value = editTodo.todo;
+    setInputValue(editTodo.todo)
+    inputRef.current.focus()
   }
-  
+
+
+
+
+  function handleDelete(id) {
+    setTodos(prev => prev.filter((item) => item.id != id))
+  }
+
 
 
   function handleHideFinished() {
@@ -63,72 +60,37 @@ function App() {
     pendingTodos.current.style.display = "flex"
     completedTodos.current.style.display = "none"
   }, [])
-
-
-
-  // function saveByEnter(e) {
-
-
-  //   if (e.key != "Enter") return;
-  //   if (inputRef.current.value.trim() == "") {
-  //     return;
-  //   }
-  //   const newTodo = {
-  //     todo: inputRef.current.value.trim(),
-  //     id: crypto.randomUUID(),
-  //     isFinished: false
-  //   }
-  //   setTodos(prev => [...prev, newTodo])
-
-  //   const oldData = localStorage.getItem("Todos")
-  //   const oldJsonData = oldData ? JSON.parse(oldData) : [];
-  //   oldJsonData.push(newTodo);
-  //   localStorage.setItem("Todos", JSON.stringify(oldJsonData))
-  //   inputRef.current.value = "";
-  // }
-
+ 
 
   function handleSave(e) {
 
-    if(editId == null){
-      if(e&&e.key&&e.key!=="Enter") return;
+    if (editId == null) {
+      if (e && e.key && e.key !== "Enter") return;
 
-      if (inputRef.current.value.trim() == "") {
+      if (inputValue.trim() == "") {
         return;
       }
 
       const todo = {
-        todo: inputRef.current.value.trim(),
+        todo: inputValue.trim(),
         id: crypto.randomUUID(),
         isFinished: false
       }
       setTodos(prev => [...prev, todo])
-      const oldData = localStorage.getItem("Todos")
-      const oldJsonData = oldData ? JSON.parse(oldData) : [];
-      oldJsonData.push(todo);
-      localStorage.setItem("Todos", JSON.stringify(oldJsonData))
-      inputRef.current.value = "";
+      setInputValue("")
     }
 
-    else {
-      if(e&&e.key&&e.key!=="Enter") return;
 
-      if (inputRef.current.value.trim() == "") {
+    else {
+      if (e && e.key && e.key !== "Enter") return;
+      if (inputValue.trim() == "") {
         return;
       }
       console.log("I'm inside else")
-      const todo = {
-        todo: inputRef.current.value.trim(),
-        id: editId,
-        isFinished: false
-      }
-      setTodos(prev => [...prev, todo])
-      const oldData = localStorage.getItem("Todos")
-      const oldJsonData = oldData ? JSON.parse(oldData) : [];
-      // const newJsonData = oldJsonData.map((item)=>item.id==editId?{...item,todo:inputRef.current.value.trim()}:item)
-      oldJsonData.push(todo);
-      localStorage.setItem("Todos", JSON.stringify(oldJsonData))
-      inputRef.current.value = "";
+      console.log(inputValue.trim())
+      setTodos(prev=>prev.map(item=>item.id==editId?{...item,todo: inputValue.trim()}:item))
+      setEditId(null)
+      setInputValue("")
     }
 
   }
@@ -140,14 +102,13 @@ function App() {
       item.id === id ? { ...item, isFinished: !item.isFinished } : item
     )
     ))
-
-
   }
 
   function isChecked(id) {
     const todo = todos.find(item => item.id == id);
     return todo.isFinished;
   }
+
 
 
 
@@ -161,7 +122,7 @@ function App() {
           <div className="add-todo-section w-full flex flex-col gap-2 min-h-30 border-b border-b-[#282828]">
             <h4 className="add-a-todo text-2xl max-xl:text-xl">Add a Todo</h4>
             <div className="input-section flex items-center gap-2 justify-center">
-              <input ref={inputRef} type="text" className='w-[90%] border bg-transparent rounded-2xl h-8 pl-4' onKeyDown={(e) => { handleSave(e) }} />
+              <input type="text" className='w-[90%] border bg-transparent rounded-2xl h-8 pl-4' ref={inputRef} value={inputValue} onChange={(e)=>handleChange(e)}  onKeyDown={(e) => { handleSave(e) }} />
               <button className='border flex justify-center items-center rounded-2xl border-white w-16 bg-[#141414] h-8' onClick={handleSave}><span>Save</span></button>
             </div>
             <label htmlFor="showFinished" className='flex items-center gap-2 w-fit'>
@@ -179,15 +140,19 @@ function App() {
                        dark:[&::-webkit-scrollbar-track]:bg-[#191919]
                                 dark:[&::-webkit-scrollbar-thumb]:bg-[#353535]">
 
-              {todos.map((item) => {
-
+              {/* {todos.map((item) => {
                 if (!item.isFinished) {
                   return (
                     <Todo handleDelete={handleDelete} handleEdit={handleEdit} isChecked={isChecked} handleFinished={handleFinished} isFinished={item.isFinished} key={item.id} todo={item.todo} id={item.id} />
                   )
                 }
 
-              })}
+              })} */}
+
+              {todos.filter(item=>(!item.isFinished && item.id!=editId)).map(item=>(
+                <Todo handleDelete={handleDelete} handleEdit={handleEdit} isChecked={isChecked} handleFinished={handleFinished} isFinished={item.isFinished} key={item.id} todo={item.todo} id={item.id} />
+              ))}
+
             </div>
 
             <div ref={completedTodos} className="completedTodos overflow-y-auto flex flex-col gap-2.5 w-full h-full max-h-100
