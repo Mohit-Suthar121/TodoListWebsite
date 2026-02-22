@@ -8,7 +8,7 @@ const Todo = (props) => {
 
             <label htmlFor={props.id} className='flex gap-4 items-center' >
                 <input type="checkbox" name="" id={props.id} checked={props.isChecked(props.id)} onChange={() => { props.handleFinished(props.id) }} />
-                <span className={props.isChecked(props.id)?"line-through":""} >
+                <span className= {`${ props.isChecked(props.id)?"line-through":""} text-white`}  >
                 {props.todo}
                 </span>
             </label>

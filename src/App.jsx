@@ -11,6 +11,7 @@ function App() {
   });
   const [editId, setEditId] = useState(null);
   const [inputValue,setInputValue] = useState("");
+  const [finishedTodos,setFinishedTodos] = useState(0);
 
   const inputRef = useRef();
   const pendingTodos = useRef();
@@ -26,6 +27,10 @@ function handleChange(e){
 
   useEffect(()=>{
     localStorage.setItem("Todos",JSON.stringify(todos))
+    const count = todos.filter(item=>item.isFinished).length;
+    console.log(count)
+    setFinishedTodos(count)
+
   },[todos])
 
   function handleEdit(id) {
@@ -118,20 +123,20 @@ function handleChange(e){
         <Navbar />
         <div className="cardContainer w-[60vw] max-md:w-[90vw] h-125 min-h-125 bg-[#080808a1] mx-auto p-4 rounded-2xl flex flex-col gap-4">
 
-          <div className='text-3xl flex justify-center max-xl:text-xl max-md:text-lg '>ITask - Manage your todos at one place!</div>
+          <div className='text-3xl flex justify-center max-xl:text-xl max-md:text-lg text-white'>ITask - Manage your todos at one place!</div>
           <div className="add-todo-section w-full flex flex-col gap-2 min-h-30 border-b border-b-[#282828]">
-            <h4 className="add-a-todo text-2xl max-xl:text-xl">Add a Todo</h4>
+            <h4 className="add-a-todo text-2xl max-xl:text-xl text-white">Add a Todo</h4>
             <div className="input-section flex items-center gap-2 justify-center">
-              <input type="text" className='w-[90%] border bg-transparent rounded-2xl h-8 pl-4' ref={inputRef} value={inputValue} onChange={(e)=>handleChange(e)}  onKeyDown={(e) => { handleSave(e) }} />
-              <button className='border flex justify-center items-center rounded-2xl border-white w-16 bg-[#141414] h-8' onClick={handleSave}><span>Save</span></button>
+              <input type="text" className='w-[90%] border bg-transparent rounded-2xl h-8 pl-4 border-white text-white' placeholder='Add a new Todo' ref={inputRef} value={inputValue} onChange={(e)=>handleChange(e)}  onKeyDown={(e) => { handleSave(e) }} />
+              <button className='border flex justify-center items-center rounded-2xl border-white w-16 bg-[#141414] h-8 text-white' onClick={handleSave}><span>Save</span></button>
             </div>
             <label htmlFor="showFinished" className='flex items-center gap-2 w-fit'>
               <input ref={checkFinished} onClick={handleHideFinished} type="checkbox" name="" id="showFinished" />
-              <div className="show-finished-div" >Show Finished</div>
+              <div className="show-finished-div text-white" >Show Finished</div>
             </label>
           </div>
           <div className="your-todos-section w-full h-[60%] flex flex-col gap-2">
-            <div className='text-2xl max-xl:text-xl'>Your Todos</div>
+            <div className='text-2xl max-xl:text-xl text-white'>Your Todos</div>
 
             <div ref={pendingTodos} className="pendingTodos overflow-y-auto flex flex-col w-full h-full max-h-100
                       [&::-webkit-scrollbar]:w-2
@@ -139,12 +144,10 @@ function handleChange(e){
                       [&::-webkit-scrollbar-thumb]:rounded-none
                        dark:[&::-webkit-scrollbar-track]:bg-[#191919]
                                 dark:[&::-webkit-scrollbar-thumb]:bg-[#353535]">
-
-          
-
               {todos.filter(item=>(!item.isFinished && item.id!=editId)).map(item=>(
                 <Todo handleDelete={handleDelete} handleEdit={handleEdit} isChecked={isChecked} handleFinished={handleFinished} isFinished={item.isFinished} key={item.id} todo={item.todo} id={item.id} />
               ))}
+              {todos.length==finishedTodos && <div className='text-red-700 w-full h-10 flex justify-center items-center'>No Todos to display! add a new Todo now!</div>}
 
             </div>
 
@@ -154,15 +157,20 @@ function handleChange(e){
                       [&::-webkit-scrollbar-thumb]:rounded-none
                        dark:[&::-webkit-scrollbar-track]:bg-[#191919]
                                 dark:[&::-webkit-scrollbar-thumb]:bg-[#353535]">
-              {todos.map((item) => {
-                if (item.isFinished) {
-                  return (
-                    <Todo handleDelete={handleDelete} handleEdit={handleEdit} isChecked={isChecked} handleFinished={handleFinished} isFinished={item.isFinished} key={item.id} todo={item.todo} id={item.id} />
-                  )
-                }
-              })}
+                                  {
+                                    todos.filter(item=>item.isFinished).map(item=>(
+                                      <Todo handleDelete={handleDelete} handleEdit={handleEdit} isChecked={isChecked} handleFinished={handleFinished} isFinished={item.isFinished} key={item.id} todo={item.todo} id={item.id}/>
+                                    ))
+                                  }
+                                 {finishedTodos==0 && <div className='text-red-700 w-full h-10 flex justify-center items-center'>No Finished Todos, finish some todos first!</div>}
 
+              
+
+                
+              
+              
             </div>
+            
 
 
           </div>
