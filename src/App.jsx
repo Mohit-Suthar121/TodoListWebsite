@@ -123,7 +123,7 @@ function handleChange(e){
         <Navbar />
         <div className="cardContainer w-[60vw] max-md:w-[90vw] h-125 min-h-125 bg-[#080808a1] mx-auto p-4 rounded-2xl flex flex-col gap-4">
 
-          <div className='text-3xl flex justify-center max-xl:text-xl max-md:text-lg text-white'>ITask - Manage your todos at one place!</div>
+          <div className='text-3xl flex justify-center max-xl:text-xl max-md:text-lg text-white'>MeTask - Manage your todos at one place!</div>
           <div className="add-todo-section w-full flex flex-col gap-2 min-h-30 border-b border-b-[#282828]">
             <h4 className="add-a-todo text-2xl max-xl:text-xl text-white">Add a Todo</h4>
             <div className="input-section flex items-center gap-2 justify-center">
