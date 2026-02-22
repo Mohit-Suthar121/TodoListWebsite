@@ -9,7 +9,7 @@ const Navbar = () => {
           {/* Brand */}
           <div className="shrink-0">
             <a href="#home" className="text-xl font-bold">
-              ITask
+              MeTask
             </a>
           </div>
 
