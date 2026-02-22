@@ -116,7 +116,7 @@ function handleChange(e){
     <>
       <div className="wrapper w-screen min-h-screen bg-[#141414] flex flex-col gap-10">
         <Navbar />
-        <div className="cardContainer w-[50vw] h-125 min-h-125 bg-[#080808a1] mx-auto p-4 rounded-2xl flex flex-col gap-4">
+        <div className="cardContainer w-[60vw] max-md:w-[90vw] h-125 min-h-125 bg-[#080808a1] mx-auto p-4 rounded-2xl flex flex-col gap-4">
 
           <div className='text-3xl flex justify-center max-xl:text-xl max-md:text-lg '>ITask - Manage your todos at one place!</div>
           <div className="add-todo-section w-full flex flex-col gap-2 min-h-30 border-b border-b-[#282828]">
@@ -133,21 +133,14 @@ function handleChange(e){
           <div className="your-todos-section w-full h-[60%] flex flex-col gap-2">
             <div className='text-2xl max-xl:text-xl'>Your Todos</div>
 
-            <div ref={pendingTodos} className="pendingTodos overflow-y-auto flex flex-col gap-2.5 w-full h-full max-h-100
+            <div ref={pendingTodos} className="pendingTodos overflow-y-auto flex flex-col w-full h-full max-h-100
                       [&::-webkit-scrollbar]:w-2
                   [&::-webkit-scrollbar-track]:rounded-none
                       [&::-webkit-scrollbar-thumb]:rounded-none
                        dark:[&::-webkit-scrollbar-track]:bg-[#191919]
                                 dark:[&::-webkit-scrollbar-thumb]:bg-[#353535]">
 
-              {/* {todos.map((item) => {
-                if (!item.isFinished) {
-                  return (
-                    <Todo handleDelete={handleDelete} handleEdit={handleEdit} isChecked={isChecked} handleFinished={handleFinished} isFinished={item.isFinished} key={item.id} todo={item.todo} id={item.id} />
-                  )
-                }
-
-              })} */}
+          
 
               {todos.filter(item=>(!item.isFinished && item.id!=editId)).map(item=>(
                 <Todo handleDelete={handleDelete} handleEdit={handleEdit} isChecked={isChecked} handleFinished={handleFinished} isFinished={item.isFinished} key={item.id} todo={item.todo} id={item.id} />
